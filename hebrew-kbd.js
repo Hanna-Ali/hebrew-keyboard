@@ -1,40 +1,51 @@
 class HebrewKbd extends HTMLElement {
   constructor() {
     super();
-    this.attachShadow({ mode: "open" });
+    this.attachShadow({ mode: 'open' });
   }
 
   connectedCallback() {
+    const targetId = this.getAttribute('target-id');
+    const inputTarget = document.getElementById(targetId);
+
+    if (!inputTarget) {
+      this.shadowRoot.innerHTML = `<p style="color:red;">Input with id "${targetId}" not found.</p>`;
+      return;
+    }
+
     this.shadowRoot.innerHTML = `
       <style>
-        body {
-          font-family: sans-serif;
-        }
-        input {
-          width: 100%;
-          font-size: 18px;
-          padding: 10px;
-          margin-bottom: 15px;
-          direction: rtl;
-        }
         .simple-keyboard {
           max-width: 600px;
+          margin-top: 10px;
+        }
+
+        .simple-keyboard .hg-button {
+          font-size: 18px;
+          padding: 12px;
+          margin: 3px;
+          background-color: #fff;
+          border: 1px solid #ccc;
+          cursor: pointer;
+        }
+
+        .simple-keyboard .hg-row {
+          display: flex;
+          justify-content: center;
         }
       </style>
-      <input id="input" placeholder="הקלד כאן..." />
+
       <div class="simple-keyboard"></div>
       <script src="https://cdn.jsdelivr.net/npm/simple-keyboard@latest/build/index.js"></script>
     `;
 
-    const keyboardInit = () => {
+    const keyboardScript = document.createElement("script");
+    keyboardScript.src = "https://cdn.jsdelivr.net/npm/simple-keyboard@latest/build/index.js";
+    keyboardScript.onload = () => {
       const Keyboard = window.SimpleKeyboard.default;
-      const input = this.shadowRoot.querySelector("#input");
-      const keyboardContainer = this.shadowRoot.querySelector(".simple-keyboard");
-
       const keyboard = new Keyboard({
-        onChange: inputVal => {
-          input.value = inputVal;
-          window.parent.postMessage({ type: "hebrewInput", value: inputVal }, "*");
+        onChange: input => {
+          inputTarget.value = input;
         },
         layout: {
           default: [
@@ -46,19 +57,17 @@ class HebrewKbd extends HTMLElement {
         display: {
           "←": "⌫"
         },
-        theme: "hg-theme-default myTheme1",
-        debug: false
-      });
-
-      input.addEventListener("input", (e) => {
-        keyboard.setInput(e.target.value);
+        onKeyPress: button => {
+          if (button === "←") {
+            const value = inputTarget.value;
+            inputTarget.value = value.slice(0, -1);
+          }
+        },
       });
     };
 
-    // Wait for external script to load
-    const script = this.shadowRoot.querySelector("script");
-    script.onload = keyboardInit;
+    this.shadowRoot.appendChild(keyboardScript);
   }
 }
 
-customElements.define("hebrew-kbd", HebrewKbd);
+customElements.define('hebrew-kbd', HebrewKbd);
