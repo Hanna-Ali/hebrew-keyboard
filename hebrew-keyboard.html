@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="he">
 <head>
@@ -25,6 +24,7 @@
   </style>
 </head>
 <body>
+<hebrewkbd>
   <input id="input" placeholder="הקלד כאן..." />
   <div class="simple-keyboard"></div>
 
@@ -39,10 +39,10 @@
         window.parent.postMessage({ type: "hebrewInput", value: inputVal }, "*");
       },
       layout: {
-        default: ["ק ר א ט ו ן ם פ", "ש ד ג כ ע י ח ל ך ף", "ז ס ב ה נ מ צ ת ץ {bksp}"],
+        default: ["ק ר א ט ו ן ם פ", "ש ד ג כ ע י ח ל ך ף", "ז ס ב ה נ מ צ ת ץ {bksp}"]
       },
       display: {
-        "{bksp}": "⌫",
+        "{bksp}": "⌫"
       },
       theme: "hg-theme-default hg-layout-default"
     });
@@ -51,5 +51,6 @@
       keyboard.setInput(event.target.value);
     });
   </script>
+</hebrewkbd>
 </body>
 </html>
