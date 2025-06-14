@@ -37,6 +37,7 @@
       onChange: inputVal => {
         input.value = inputVal;
         window.parent.postMessage({ type: "hebrewInput", value: inputVal }, "*");
+        console.log("📤 Sent message:", inputVal);
       },
       layout: {
         default: ["ק ר א ט ו ן ם פ", "ש ד ג כ ע י ח ל ך ף", "ז ס ב ה נ מ צ ת ץ {bksp}"]
